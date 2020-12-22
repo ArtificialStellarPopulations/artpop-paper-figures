@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+.*.swp
+.dropbox.attr
+.DS_Store
+sandbox
