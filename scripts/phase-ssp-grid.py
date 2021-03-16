@@ -16,11 +16,11 @@ plt.style.use('jpg.mplstyle')
 ###############################################################################
 xy_dim = 501
 phot_system ='LSST'
-pixel_scale = 0.2
+pixel_scale = 0.168
 mirror_diameter = 6.4 * u.m
 mu_sky_vals = [19.9, 21.2, 22.0] # sky brightness
 exptimes = 3 * np.array([30, 15, 15]) * u.min # exposure times
-seeing = [0.7] * 3
+seeing = [0.5] * 3
 
 psf = {'irg'[i]: artpop.moffat_psf(seeing[i], pixel_scale) for i in range(3)}
 
@@ -90,8 +90,7 @@ for i, log_age in enumerate(log_ages):
         rgb = make_lupton_rgb(*images, stretch=stretch, Q=Q)
 
         # plot image
-        _, _ax = artpop.show_image(rgb, subplots=(fig, axes[i, j]),
-                                   rasterized=True)
+        _, _ax = artpop.show_image(rgb, subplots=(fig, axes[i, j]))
 
         # ddd labels
         if i==0:
@@ -105,4 +104,5 @@ for i, log_age in enumerate(log_ages):
                             transform=axes[i, j].transAxes,
                             rotation=90, fontsize=22)
 
-fig.savefig('../figures/phase-ssp-grid.pdf', dpi=300)
+fig.savefig('../figures/phase-ssp-grid.pdf')
+fig.savefig('../figures/phase-ssp-grid.png', dpi=250)

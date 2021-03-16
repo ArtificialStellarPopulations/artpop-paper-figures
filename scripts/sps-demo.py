@@ -125,7 +125,6 @@ for feh in [0.0, -1.5]:
     ax[3].plot(10**log_ages, Bbar[feh] - Rbar[feh], c='k',
                label=f'{sign}{abs(feh)}', **kw)
 
-
 ax[0].set(yscale='log')
 ax[0].set_ylim(ymax=10)
 ax[0].set_ylabel('$M / L$ [$M_\odot/L_\odot$]', fontsize=25, labelpad=4)
