@@ -105,6 +105,7 @@ for feh in [0.0, -1.5]:
     ax[0].plot(10**log_ages, m_l, c='tab:blue', label=label('V'), **kw)
 
     sign = '' if feh >= 0 else '$-$'
+    label = lambda b: {0.0: '', -1.5: '$\overline{' + b + '}$'}[feh]
     ax[1].plot(10**log_ages, V[feh] - I[feh], c='k',  **kw)
     ax[2].plot(10**log_ages, Ibar[feh], c='tab:red', label=label('I'),**kw)
     ax[2].plot(10**log_ages, Vbar[feh], c='tab:blue', label=label('V'), **kw)
