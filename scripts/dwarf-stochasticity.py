@@ -230,22 +230,3 @@ ax6.text(8,190,r'$g-r$ = '+str(high_color)+' mag',color='w', fontsize=20)
 ax6.axis('off')
 
 plt.savefig('../figures/dwarf_stoc.jpeg', dpi=400, bbox_inches='tight')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
