@@ -99,6 +99,10 @@ for i in range(N_dwarfs):
         highest_idx = i
         src_high = src
         ssp_high = ssp
+
+# save to a csv file in case we will need to re-plot
+df.to_csv('../data/df_dwarfs.csv')
+
 ###############################################################################
    
 
@@ -229,4 +233,4 @@ ax6.text(8,175,r'$m_g$ = '+str(high_mag)+' mag',color='w', fontsize=20)
 ax6.text(8,190,r'$g-r$ = '+str(high_color)+' mag',color='w', fontsize=20)
 ax6.axis('off')
 
-plt.savefig('../figures/dwarf_stoc.jpeg', dpi=400, bbox_inches='tight')
+plt.savefig('../figures/dwarf_stoc2.jpeg', dpi=400, bbox_inches='tight')
