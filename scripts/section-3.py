@@ -90,7 +90,10 @@ imager = IdealImager()
 from artpop.image import moffat_psf
 
 # returns a 2D numpy array
-psf = moffat_psf(fwhm=0.6*u.arcsec)
+psf = moffat_psf(
+    fwhm=0.6*u.arcsec,
+    pixel_scale=0.2
+)
 
 obs = imager.observe(src, "LSST_i", psf)
 
