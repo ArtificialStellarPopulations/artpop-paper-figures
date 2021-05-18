@@ -92,7 +92,7 @@ for i, log_age in enumerate(log_ages):
         # plot image
         _, _ax = artpop.show_image(rgb, subplots=(fig, axes[i, j]))
 
-        # ddd labels
+        # add labels
         if i==0:
             _ax.set_title(phase_labels[j], fontsize=fs)
         if j == 0:

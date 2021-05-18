@@ -158,7 +158,6 @@ imager = artpop.ArtImager(phot_system, diameter=2.4, read_noise=3)
 # need AB magnitudes to use ArtImager
 zpt_convert = artpop.load_zero_point_converter()
 
-
 exptime = 90 * u.min
 images =[]
 
