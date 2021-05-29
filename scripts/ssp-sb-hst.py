@@ -80,7 +80,8 @@ for i, sb in enumerate(sbs):
     _, _ax = artpop.show_image(rgb, subplots=(fig, axes[i]))
 
     # add labels
-    axes[i].text(0.04, 0.96, '$\mu_I \sim'+str(int(sb))+'\,\mathrm{mag\,arcsec}^{-2}$', 
+    axes[i].text(0.04, 0.96, '$\mu_I \sim'+str(int(sb))+
+        '\,\mathrm{mag\,arcsec}^{-2}$', 
         c='black', fontsize=25, 
         bbox=dict(facecolor='white', edgecolor='white',linewidth=2, 
             boxstyle='round,pad=0.25', alpha=0.8),
