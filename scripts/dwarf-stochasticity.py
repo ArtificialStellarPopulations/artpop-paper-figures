@@ -53,7 +53,8 @@ ellip = 0.25
 ###############################################################################
 N_dwarfs = 1000
 index = np.arange(N_dwarfs)
-df = pd.DataFrame(index=index, columns = ['g_mag', 'r_mag', 'int_color', 'num_rgb', 'num_cheb', 'num_agb','num_eagb', 'num_tpagb'])
+df = pd.DataFrame(index=index, columns = ['g_mag', 'r_mag', 'int_color', 
+    'num_rgb', 'num_cheb', 'num_agb','num_eagb', 'num_tpagb'])
 
 lowest_color = 1
 lowest_idx = 0
@@ -65,17 +66,20 @@ for i in range(N_dwarfs):
 
     # create MIST Sersic SSP object    
     ssp = artpop.MISTSSP(log_age=log_age, feh=feh, phot_system=phot_system, 
-                         total_mass=total_mass, distance=distance, imf='kroupa')
+                         total_mass=total_mass, distance=distance, 
+                         imf='kroupa')
         
     # create Sersic source with the SSP just created
     src = artpop.SersicSP(ssp, r_eff=r_eff, n=n, theta=theta, 
-                          ellip=ellip, xy_dim=xy_dim, pixel_scale=pixel_scale,
+                          ellip=ellip, xy_dim=xy_dim, 
+                          pixel_scale=pixel_scale,
                           num_r_eff=10, dx=0, dy=0)
 
 	# populate the data frame with useful information on the SSP 
     df.loc[df.index[i], 'g_mag'] = ssp.total_mag(bandpass='DECam_g')
     df.loc[df.index[i], 'r_mag'] = ssp.total_mag(bandpass='DECam_r')
-    df.loc[df.index[i], 'int_color'] = ssp.integrated_color('DECam_g','DECam_r')
+    df.loc[df.index[i], 'int_color'] = ssp.integrated_color('DECam_g',
+        'DECam_r')
     
     mask_rgb = ssp.select_phase(phase='RGB')
     df.loc[df.index[i], 'num_rgb'] = sum(mask_rgb)
@@ -151,12 +155,14 @@ tpagb_color_std = describe_tpagb['int_color']['std'].to_numpy()
 obs_i = imager.observe(src_low, 'DECam_i', psf_i, zpt=zpt)
 obs_r = imager.observe(src_low, 'DECam_r', psf_r, zpt=zpt)
 obs_g = imager.observe(src_low, 'DECam_g', psf_g, zpt=zpt)
-mock_rgb_low = make_lupton_rgb(obs_i.image, obs_r.image, obs_g.image, stretch=15)
+mock_rgb_low = make_lupton_rgb(obs_i.image, obs_r.image, obs_g.image, 
+    stretch=15)
 
 obs_i = imager.observe(src_high, 'DECam_i', psf_i, zpt=zpt)
 obs_r = imager.observe(src_high, 'DECam_r', psf_r, zpt=zpt)
 obs_g = imager.observe(src_high, 'DECam_g', psf_g, zpt=zpt)
-mock_rgb_high = make_lupton_rgb(obs_i.image, obs_r.image, obs_g.image, stretch=15)
+mock_rgb_high = make_lupton_rgb(obs_i.image, obs_r.image, obs_g.image, 
+    stretch=15)
 ###############################################################################
 
 
@@ -168,20 +174,28 @@ fig, ((ax1,ax2),(ax3,ax4),(ax5,ax6)) = plt.subplots(3,2, figsize=(15/1.5,15))
 # distributions of the # of stars in each stellar population 
 binwidth = 1
 data_hist_rgb = num_rgb-mean_rgb
-bins_rgb = range(min(data_hist_rgb), max(data_hist_rgb) + binwidth, binwidth)
-ax1.hist(num_rgb-mean_rgb, bins=bins_rgb, label=r'RGB', histtype='step', facecolor=None, edgecolor='r', lw=2)
+bins_rgb = range(min(data_hist_rgb), 
+    max(data_hist_rgb) + binwidth, binwidth)
+ax1.hist(num_rgb-mean_rgb, bins=bins_rgb, label=r'RGB', histtype='step', 
+    facecolor=None, edgecolor='r', lw=2)
 
 data_hist_cheb = num_cheb-mean_cheb
-bins_cheb = range(min(data_hist_cheb), max(data_hist_cheb) + binwidth, binwidth)
-ax1.hist(num_cheb-mean_cheb, bins=bins_cheb, label=r'CHeB', histtype='step', facecolor=None, edgecolor='b', lw=2)
+bins_cheb = range(min(data_hist_cheb),
+ max(data_hist_cheb) + binwidth, binwidth)
+ax1.hist(num_cheb-mean_cheb, bins=bins_cheb, label=r'CHeB', histtype='step', 
+    facecolor=None, edgecolor='b', lw=2)
 
 data_hist_eagb = num_eagb-mean_eagb
-bins_eagb = range(min(data_hist_eagb), max(data_hist_eagb) + binwidth, binwidth)
-ax1.hist(num_eagb-mean_eagb, bins=bins_eagb, label=r'EAGB', histtype='step', facecolor=None, edgecolor='g', lw=2)
+bins_eagb = range(min(data_hist_eagb), 
+    max(data_hist_eagb) + binwidth, binwidth)
+ax1.hist(num_eagb-mean_eagb, bins=bins_eagb, label=r'EAGB', histtype='step', 
+    facecolor=None, edgecolor='g', lw=2)
 
 data_hist_tpagb = num_tpagb-mean_tpagb
-bins_tpagb = range(min(data_hist_tpagb), max(data_hist_tpagb) + binwidth, binwidth)
-ax1.hist(num_tpagb-mean_tpagb, bins=bins_tpagb, label=r'TPAGB', histtype='step', facecolor=None, edgecolor='orange', lw=2)
+bins_tpagb = range(min(data_hist_tpagb), 
+    max(data_hist_tpagb) + binwidth, binwidth)
+ax1.hist(num_tpagb-mean_tpagb, bins=bins_tpagb, label=r'TPAGB', histtype='step', 
+    facecolor=None, edgecolor='orange', lw=2)
 
 ax1.set_xlabel(r'N$_{\mathrm{stars}}- \bar \mathrm{N}_{\mathrm{stars}}$')
 ax1.set_ylabel(r'N$_{\mathrm{gal}}$')
@@ -193,24 +207,33 @@ ax1.text(0.05,0.4,'N$_{\mathrm{RGB, mean}}=$'+str(mean_rgb)+
 ax1.legend(loc='upper left', fontsize=12)
 
 # integrated color distribution
-ax2.hist(df.int_color, bins=20, color='#54278f', alpha=0.3, histtype='stepfilled', edgecolor='#54278f', lw=4)
+ax2.hist(df.int_color, bins=20, color='#54278f', alpha=0.3, 
+    histtype='stepfilled', edgecolor='#54278f', lw=4)
 ax2.set_xlabel(r'$g-r$')
 ax2.set_ylabel(r'N$_\mathrm{gal}$')
 
 # g-band magnitude as a function of N_stars for EAGB and TPAGB stars
-ax3.scatter(num_eagb_bin/np.max(num_eagb_bin) ,eagb_g_mean, color='g', label='EAGB')
-ax3.errorbar(num_eagb_bin/np.max(num_eagb_bin) ,eagb_g_mean, yerr=eagb_g_std, color='g', fmt='.')
-ax3.scatter(num_tpagb_bin/np.max(num_tpagb_bin) ,tpagb_g_mean, color='orange', label='TPAGB')
-ax3.errorbar(num_tpagb_bin/np.max(num_tpagb_bin) ,tpagb_g_mean, yerr=tpagb_g_std, color='orange', fmt='.')
+ax3.scatter(num_eagb_bin/np.max(num_eagb_bin) ,eagb_g_mean, 
+    color='g', label='EAGB')
+ax3.errorbar(num_eagb_bin/np.max(num_eagb_bin) ,eagb_g_mean, 
+    yerr=eagb_g_std, color='g', fmt='.')
+ax3.scatter(num_tpagb_bin/np.max(num_tpagb_bin) ,tpagb_g_mean, 
+    color='orange', label='TPAGB')
+ax3.errorbar(num_tpagb_bin/np.max(num_tpagb_bin) ,tpagb_g_mean, 
+    yerr=tpagb_g_std, color='orange', fmt='.')
 ax3.set_xlabel(r'N$_\mathrm{stars}/\mathrm{N}_\mathrm{stars,max}$')
 ax3.set_ylabel(r'$g$')
 ax3.legend(fontsize=15)
 
 # g-r color as a function of N_stars for EAGB and TPAGB stars
-ax4.scatter(num_eagb_bin/np.max(num_eagb_bin) ,eagb_color_mean, color='g', label='EAGB')
-ax4.errorbar(num_eagb_bin/np.max(num_eagb_bin) ,eagb_color_mean, yerr=eagb_color_std, color='g', fmt='.')
-ax4.scatter(num_tpagb_bin/np.max(num_tpagb_bin) ,tpagb_color_mean, color='orange', label='TPAGB')
-ax4.errorbar(num_tpagb_bin/np.max(num_tpagb_bin) ,tpagb_color_mean, yerr=tpagb_color_std, color='orange', fmt='.')
+ax4.scatter(num_eagb_bin/np.max(num_eagb_bin) ,eagb_color_mean, 
+    color='g', label='EAGB')
+ax4.errorbar(num_eagb_bin/np.max(num_eagb_bin) ,eagb_color_mean, 
+    yerr=eagb_color_std, color='g', fmt='.')
+ax4.scatter(num_tpagb_bin/np.max(num_tpagb_bin) ,tpagb_color_mean, 
+    color='orange', label='TPAGB')
+ax4.errorbar(num_tpagb_bin/np.max(num_tpagb_bin) ,tpagb_color_mean, 
+    yerr=tpagb_color_std, color='orange', fmt='.')
 ax4.set_xlabel(r'N$_\mathrm{stars}/\mathrm{N}_\mathrm{stars,max}$')
 ax4.set_ylabel(r'$g-r$')
 
@@ -233,4 +256,4 @@ ax6.text(8,175,r'$m_g$ = '+str(high_mag)+' mag',color='w', fontsize=20)
 ax6.text(8,190,r'$g-r$ = '+str(high_color)+' mag',color='w', fontsize=20)
 ax6.axis('off')
 
-plt.savefig('../figures/dwarf_stoc2.jpeg', dpi=400, bbox_inches='tight')
+plt.savefig('../figures/dwarf_stoc.jpeg', dpi=400, bbox_inches='tight')
