@@ -4,91 +4,109 @@ import matplotlib.pyplot as plt
 from astropy.visualization import make_lupton_rgb
 from astropy import units as u
 from astropy.io import fits
-# from astropy.visualization import *
 
 # Project
 import artpop
-from artpop import constant_sb_stars_per_pix
 
 # Load matplotlib style
 plt.style.use('jpg.mplstyle')
+
+# need AB magnitudes to use ArtImager
+zpt_convert = artpop.load_zero_point_converter()
 
 
 ###############################################################################
 # Instrumental and observational parameters
 ###############################################################################
-xy_dim = 2001
+xy_dim = [701, 501]
 phot_system ='HST_ACSWF'
-bands = ['F814W','F555W','F435W']
+bands = [f'ACS_WFC_{b}' for b in ['F814W','F606W','F475W']]
 pixel_scale = 0.05
-exptime = 50 * u.min
+exptime = 90 * u.min
 
 # read in Tiny Tim-modeled PSFs
-psf = {bands[i]: fits.getdata('../data/'+str(bands[i])+'_psf_20as.fits') 
-for i in range(3)}
+z = 120
+psf = {b: fits.getdata(f'../data/{b}.fits')[z:-z, z:-z] for b in bands}
 
 # Initialize art imager
-imager = artpop.ArtImager(phot_system)
-###############################################################################
+imager = artpop.ArtImager(phot_system, diameter=2.4, read_noise=3)
 
 
 ###############################################################################
 # Stellar population parameters
 ###############################################################################
-log_age = 10
+log_age = 9.
 feh = -1
-sbs = [26.0, 24.0, 20.0]
+sbs = [26.0, 23.0, 20.0]
 sb_band = 'ACS_WFC_F814W'
-
-distance = 1 * u.Mpc
+d_vals = np.array([8, 2, 0.5]) # Mpc
 
 
 ###############################################################################
-# Make constant distance SSP, varying surface brightness figure
+# Make distance - SB grid figure
 ###############################################################################
 
-fig, axes = plt.subplots(1, len(sbs), figsize=(15, 5),
-                         subplot_kw=dict(xticks=[], yticks=[]))
+fig, axes = plt.subplots(
+    len(d_vals), len(sbs),
+    figsize=(15, int(15.5 * xy_dim[1]/xy_dim[0])),
+    subplot_kw=dict(xticks=[], yticks=[])
+)
+
 fig.subplots_adjust(wspace=0.03, hspace=0.03)
 
-q = 0.5
+# label surface brightnesses
+y = 1.015
+title_fs = 25
+unit_lab = '\,\mathrm{mag\,arcsec}^{-2}$'
+kw = dict(fontsize=title_fs, y=y)
+axes[0, 0].set_title('$\mu_I = ' + str(int(sbs[0])) + unit_lab, **kw)
+axes[0, 1].set_title('$' + str(int(sbs[1])) + unit_lab, **kw)
+axes[0, 2].set_title('$' + str(int(sbs[2])) + unit_lab, **kw)
+
+# label distances
+l = r'\ Mpc}$'
+axes[2, 0].set_ylabel(r'$\mathrm{D = ' + str(d_vals[2]) + l, fontsize=title_fs)
+axes[1, 0].set_ylabel(r'$\mathrm{' + str(d_vals[1]) + l, fontsize=title_fs)
+axes[0, 0].set_ylabel(r'$\mathrm{' + str(d_vals[0]) + l, fontsize=title_fs)
+
+q = 8
 stretch = 0.01
-m = 0.
+count = 0
+axes = axes.flatten()
 
-# create MIST uniform spatial distribution SSP sources at various sb
-for i, sb in enumerate(sbs):
-    src = artpop.MISTUniformSSP(
-        log_age, feh, phot_system,
-        distance, xy_dim, pixel_scale,
-        sb, sb_band
-    )
+for d in d_vals:
 
-    images = []
+    # create MIST uniform spatial distribution SSP sources at various sb
+    for sb in sbs:
+        print(f'D = {d}, mu = {sb}')
+        mag_lim_kw = dict(mag_limit=None, mag_limit_band=None)
+        dist_mod = 5 * np.log10(d * 1e6) - 5
 
-    # mock observe in F435W, F555W, and F814W
-    for num, band in enumerate(bands):
-        obs = imager.observe(src, f'ACS_WFC_{band}', 
-            exptime, psf=psf[band]
+        # setting mag limit for discrete sources when sb = 20
+        # if we don't do this, we will have memory issues
+        if sb == 20:
+            mag_lim_kw = dict(mag_limit=dist_mod + 4.5, mag_limit_band=sb_band)
+        src = artpop.MISTUniformSSP(
+            log_age, feh, phot_system, d, xy_dim, pixel_scale,
+            sb, sb_band, **mag_lim_kw
         )
-        images.append(obs.image)
+        images = []
 
-    # create RGB image
-    images = [0.4*images[0], 0.7*images[1], 0.6*images[2]]
-    rgb = make_lupton_rgb(*images, Q=q, stretch=stretch, minimum=m)
+        # mock observe in F474W, F606W, and F814W
+        for num, band in enumerate(bands):
+            sky_sb = 27
+            zpt = 25 - zpt_convert.to_ab(band)
+            obs = imager.observe(src, band, exptime, psf=psf[band],
+                                 sky_sb=sky_sb, zpt=zpt)
+            images.append(obs.image)
 
-    # plot image
-    _, _ax = artpop.show_image(rgb, subplots=(fig, axes[i]))
+        # create RGB image
+        rgb = make_lupton_rgb(*images, Q=q, stretch=stretch)
 
-    # add labels
-    axes[i].text(0.04, 0.96, '$\mu_I \sim'+str(int(sb))+
-        '\,\mathrm{mag\,arcsec}^{-2}$', 
-        c='black', fontsize=25, 
-        bbox=dict(facecolor='white', edgecolor='white',linewidth=2, 
-            boxstyle='round,pad=0.25', alpha=0.8),
-         horizontalalignment='left', verticalalignment='top', 
-         transform=axes[i].transAxes)
+        # plot image
+        _, _ax = artpop.show_image(rgb, subplots=(fig, axes[count]))
+
+        count += 1
 
 fig.savefig('../figures/artpop_sb.pdf', dpi=250)
 fig.savefig('../figures/artpop_sb.png', dpi=250)
-
-
