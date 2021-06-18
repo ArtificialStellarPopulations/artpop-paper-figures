@@ -65,6 +65,7 @@ from artpop import Source
 from artpop.space import plummer_xy
 
 xy_dim = (501, 501) # image dimensions
+pixel_scale = 0.2 * u.arcsec / u.pixel
 
 # returns a 2D numpy array
 xy = plummer_xy(
@@ -72,7 +73,7 @@ xy = plummer_xy(
     scale_radius=500*u.pc,
     distance=8*u.Mpc,
     xy_dim=xy_dim,
-    pixel_scale=0.2 # arcsec / pixel
+    pixel_scale=pixel_scale
 )
 
 # ssp magnitudes stored in astropy table
@@ -92,7 +93,7 @@ from artpop.image import moffat_psf
 # returns a 2D numpy array
 psf = moffat_psf(
     fwhm=0.6*u.arcsec,
-    pixel_scale=0.2
+    pixel_scale=pixel_scale
 )
 
 obs = imager.observe(src, "LSST_i", psf)
