@@ -92,7 +92,7 @@ axes[0].set_box_aspect(1)
 ###############################################################################
 # Middle panel: inject model to DES image
 ###############################################################################
-datapath = '../data/'
+datapath = '/Users/shanydanieli/projects/artpop/data/des/'
 image_g, hdr_g = fits.getdata(datapath+'DES0128-4249_r2624p01_g.fits.fz', 
     header=True)
 image_r, hdr_r = fits.getdata(datapath+'DES0128-4249_r2624p01_r.fits.fz', 
@@ -161,10 +161,3 @@ lgnd.legendHandles[2]._sizes = [30]
 lgnd.legendHandles[3]._sizes = [30]
 
 fig.savefig('../figures/dwarf_des.png', dpi=400, bbox_inches='tight')
-
-
-
-
-
-
-
