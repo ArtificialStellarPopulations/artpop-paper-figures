@@ -170,5 +170,4 @@ lgnd.legendHandles[1]._sizes = [30]
 lgnd.legendHandles[2]._sizes = [30]
 lgnd.legendHandles[3]._sizes = [30]
 
-fig.savefig(os.path.join(fig_path, 'dwarf_des.png'), dpi=400)
-
+fig.savefig('../figures/dwarf_des.png', dpi=400, bbox_inches='tight')
