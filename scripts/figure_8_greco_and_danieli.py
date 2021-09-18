@@ -12,13 +12,13 @@ from astropy.io import fits
 import artpop
 from artpop.util import embed_slices
 
-# Load matplotlib style
+# load matplotlib style
 plt.style.use(artpop.jpg_style)
 
-# Path to figures
+# path to figures
 fig_path = os.path.join(os.pardir, 'figures')
 
-# Path to data
+# path to data
 data_path = os.path.join(os.pardir, 'data')
 
 
@@ -170,4 +170,4 @@ lgnd.legendHandles[1]._sizes = [30]
 lgnd.legendHandles[2]._sizes = [30]
 lgnd.legendHandles[3]._sizes = [30]
 
-fig.savefig('../figures/dwarf_des.png', dpi=400, bbox_inches='tight')
+fig.savefig(os.path.join(fig_path, 'dwarf_des.png'))
