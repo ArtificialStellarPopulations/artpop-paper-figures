@@ -6,7 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from astropy.visualization import make_lupton_rgb
 from astropy import units as u
-from astropy.modeling.models import Moffat1D
 
 # Project
 import artpop
