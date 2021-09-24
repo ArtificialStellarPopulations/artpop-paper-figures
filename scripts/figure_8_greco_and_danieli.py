@@ -59,9 +59,9 @@ ellip = 0.25
 # Create MIST Sersic SSP source
 ###############################################################################
 src = artpop.MISTSersicSSP(
-	log_age, feh, phot_system,
-	r_eff, n, theta, ellip, distance, xy_dim,
-	pixel_scale, total_mass=total_mass, label_type='phases'
+    log_age, feh, phot_system,
+    r_eff, n, theta, ellip, distance, xy_dim,
+    pixel_scale, total_mass=total_mass, label_type='phases'
     )
 ###############################################################################
 
@@ -101,14 +101,15 @@ axes[0].set_box_aspect(1)
 ###############################################################################
 # Middle panel: inject model to DES image
 ###############################################################################
-fn_g = os.path.join(data_path, f'DES0128-4249_r2624p01_g.fits.fz')
-fn_r = os.path.join(data_path, f'DES0128-4249_r2624p01_r.fits.fz')
-fn_i = os.path.join(data_path, f'DES0128-4249_r2624p01_i.fits.fz')
+fn_g = os.path.join(data_path, f'des_dr1_cutout_g.fits')
+fn_r = os.path.join(data_path, f'des_dr1_cutout_r.fits')
+fn_i = os.path.join(data_path, f'des_dr1_cutout_i.fits')
 image_g, hdr_g = fits.getdata(fn_g, header=True)
 image_r, hdr_r = fits.getdata(fn_r, header=True)
 image_i, hdr_i = fits.getdata(fn_i, header=True)
 
-img_slice, arr_slice = embed_slices((4000, 5500),
+# img_slice, arr_slice = embed_slices((4000, 5500),
+img_slice, arr_slice = embed_slices((550, 550),
                                     images[0].shape,
                                     image_g.shape)
 
@@ -123,8 +124,7 @@ axes[1].text(0.5, -0.05, 'model injected to DES data', c='black', fontsize=17,
             linewidth=2, boxstyle='round,pad=0.4', alpha=0.8),
          horizontalalignment='center',
          verticalalignment='top', transform=axes[1].transAxes)
-axes[1].set_xlim(5000,6000)
-axes[1].set_ylim(3500,4500)
+axes[1].invert_xaxis()
 axes[1].set_axis_off()
 axes[1].set_box_aspect(1)
 ###############################################################################
@@ -139,7 +139,6 @@ mag_r = src.sp.mag_table['DECam_r']
 
 lim_mag_g = 24.33
 
-# phases = ['MS', 'RGB', 'CHeB', 'EAGB', 'TPAGB', 'postAGB']
 phases = ['RGB', 'CHeB', 'EAGB', 'TPAGB']
 colors = ['r', 'purple', 'green', 'blue']
 
@@ -170,4 +169,4 @@ lgnd.legendHandles[1]._sizes = [30]
 lgnd.legendHandles[2]._sizes = [30]
 lgnd.legendHandles[3]._sizes = [30]
 
-fig.savefig(os.path.join(fig_path, 'dwarf_des.png'))
+fig.savefig(os.path.join(fig_path, 'dwarf_des.jpeg'), dpi=300)
