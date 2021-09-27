@@ -61,7 +61,7 @@ sax = ax.scatter(g_I, I + dist_mod, c=log_wghts, vmin=-1.5, vmax=0.1, **kw)
 # make color bar
 cbaxes = fig.add_axes([0.47, 0.53, 0.38, 0.03])
 cbar = plt.colorbar(sax, orientation='horizontal', cax=cbaxes)
-cbar.ax.set_xlabel(r'log$_{10}$(dN/dM)', fontsize=25, labelpad=-70)
+cbar.ax.set_xlabel(r'log$_{10}$(dN/dM)', fontsize=30, labelpad=-74)
 cbar.ax.tick_params(length=6, labelsize=20)
 cbar.ax.xaxis.set_ticks_position('bottom')
 
@@ -75,10 +75,10 @@ ax.yaxis.set_ticks_position('left')
 ax.xaxis.set_ticks_position('bottom')
 
 # SSP annotations
-fs = 22.5
-y = 0.34
+fs = 31
+y = 0.32
 dy = 0.1
-x = 0.14
+x = 0.13
 ha = 'left'
 ax.text(x, y, f'D = {int(distance.value)} kpc', transform=ax.transAxes,
         ha=ha, va='center', fontsize=fs)

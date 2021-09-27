@@ -38,8 +38,8 @@ xy_dim_arcsec = 70
 xy_dim = {s: 2 * int(xy_dim_arcsec/pixel_scale[s]/2) + 1 for s in phot_system}
 fwhm = {s: f for s, f in zip(phot_system, [0.1, 0.6, 1.4])}
 
-log_age = 10.0
-feh = -1.5
+log_age = 10.1
+feh = -1.8
 total_mass = 3e6 * u.Msun
 r_s = 0.4 * u.kpc
 distance = 5.0 * u.Mpc

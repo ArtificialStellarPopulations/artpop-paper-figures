@@ -42,7 +42,7 @@ imager = artpop.ArtImager(phot_system, diameter=2.4, read_noise=3)
 # Stellar population parameters
 ###############################################################################
 log_age = 10.0
-feh = -1.5
+feh = -1.6
 sbs = [26.0, 23.0, 20.0]
 sb_band = 'ACS_WFC_F814W'
 d_vals = np.array([8, 2, 0.5]) # Mpc
@@ -87,7 +87,6 @@ for d in d_vals:
 
     # create MIST uniform spatial distribution SSP sources at various sb
     for sb in sbs:
-        print(f'D = {d}, mu = {sb}')
         mag_lim_kw = dict(mag_limit=None, mag_limit_band=None)
         dist_mod = 5 * np.log10(d * 1e6) - 5
 
@@ -100,6 +99,8 @@ for d in d_vals:
             log_age, feh, phot_system, d, xy_dim, pixel_scale,
             sb, sb_band, **mag_lim_kw
         )
+
+        print(f'D = {d}, mu = {sb}, N_star = {len(src.mags):.3e}')
 
         images = []
 
