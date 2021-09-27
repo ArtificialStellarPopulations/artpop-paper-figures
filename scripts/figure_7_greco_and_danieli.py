@@ -134,8 +134,10 @@ ax[0].set_title('MIST Dwarf Galaxy', fontsize=title_fs, pad=11)
 ax[0].set_xlabel('$g_{475} - I_{814} = ' + str(round(mist_gI, 1)) + '$',
                  fontsize=title_fs, labelpad=10)
 
-ax[1].plot(g_parsec - I_parsec, I_parsec, '.', c='tab:red', label='PARSEC')
-ax[1].plot(g_mist - I_mist, I_mist, '.', c='tab:blue', label='MIST')
+ax[1].plot(g_parsec - I_parsec, I_parsec, '.', c='tab:red', label='PARSEC',
+           rasterized=True)
+ax[1].plot(g_mist - I_mist, I_mist, '.', c='tab:blue', label='MIST',
+           rasterized=True)
 
 x = 0.92
 y = 0.21
@@ -191,4 +193,4 @@ ax[2].set_xlabel('$g_{475} - I_{814} = $ ' + f'{parsec_gI:.1f}',
                  fontsize=title_fs, labelpad=10)
 ax[2].annotate('', **annotate_kw)
 
-fig.savefig(os.path.join(fig_path, 'mist_vs_parsec_dwarf.png'), dpi=250);
+fig.savefig(os.path.join(fig_path, 'mist_vs_parsec_dwarf.pdf'), dpi=170);

@@ -38,8 +38,8 @@ xy_dim_arcsec = 70
 xy_dim = {s: 2 * int(xy_dim_arcsec/pixel_scale[s]/2) + 1 for s in phot_system}
 fwhm = {s: f for s, f in zip(phot_system, [0.1, 0.6, 1.4])}
 
-log_age = 10.1
-feh = -1.0
+log_age = 10.0
+feh = -1.5
 total_mass = 3e6 * u.Msun
 r_s = 0.4 * u.kpc
 distance = 5.0 * u.Mpc
@@ -85,12 +85,12 @@ for i, texp in enumerate(exptimes):
         image = []
         for b in 'irg':
             sky_sb = dict(i=20, r=21, g=22)[b]
-            obs = imager.observe(_src, f'SDSS_{b}', texp, sky_sb, psf)
+            obs = imager.observe(_src, f'hsc_{b}', texp, sky_sb, psf)
             image.append(obs.image)
 
         stretch = 0.9 / pixscale_ratio
         rgb = make_lupton_rgb(*image, stretch=stretch)
-        artpop.show_image(rgb, subplots=(fig, ax))
+        artpop.show_image(rgb, subplots=(fig, ax), rasterized=True)
 
         x0, y0 = np.array([10, 10]) * pixscale_ratio
 
@@ -106,4 +106,4 @@ axes[0, 0].set_title('FWHM = $0.\!\!^{\prime\prime}1$', fontsize=fs)
 axes[0, 1].set_title('$0.\!\!^{\prime\prime}6$', fontsize=fs)
 axes[0, 2].set_title('$1.\!\!^{\prime\prime}4$', fontsize=fs);
 
-plt.savefig(os.path.join(fig_path, 'artpop_psf_exptime.png'), dpi=250)
+plt.savefig(os.path.join(fig_path, 'artpop_psf_exptime.pdf'), dpi=170)

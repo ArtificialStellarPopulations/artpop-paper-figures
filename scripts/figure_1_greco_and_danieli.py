@@ -26,10 +26,10 @@ phot_system = 'HST_ACSWF'
 pixel_scale = 0.05
 
 log_age = 10.1
-feh = -1.65
-r_s = 0.65 * u.pc
+feh = -2
+r_s = 0.8 * u.pc
 total_mass = 2e5 * u.Msun
-distance = 17 * u.kpc
+distance = 5 * u.kpc
 
 mist = artpop.MISTIsochrone(log_age, feh, phot_system)
 ###############################################################################
@@ -49,7 +49,7 @@ wghts = artpop.imf_dict[imf](mist.mini)
 wghts /= wghts.max()
 log_wghts = np.log10(wghts)
 
-fig, ax = plt.subplots(figsize=(10, 7))
+fig, ax = plt.subplots(figsize=(9, 8))
 kw = dict(s=50, marker='o',cmap='bone')
 
 # distance modulus
@@ -59,7 +59,7 @@ dist_mod = 5 * np.log10(distance.to('pc').value) - 5
 sax = ax.scatter(g_I, I + dist_mod, c=log_wghts, vmin=-1.5, vmax=0.1, **kw)
 
 # make color bar
-cbaxes = fig.add_axes([0.23, 0.22, 0.38, 0.03])
+cbaxes = fig.add_axes([0.47, 0.53, 0.38, 0.03])
 cbar = plt.colorbar(sax, orientation='horizontal', cax=cbaxes)
 cbar.ax.set_xlabel(r'log$_{10}$(dN/dM)', fontsize=25, labelpad=-70)
 cbar.ax.tick_params(length=6, labelsize=20)
@@ -76,15 +76,16 @@ ax.xaxis.set_ticks_position('bottom')
 
 # SSP annotations
 fs = 22.5
-y = 0.67
+y = 0.34
 dy = 0.1
-x = 0.94
-ax.text(x, y, f'Age = {round(10**10.1 /1e9, 1)} Gyr', transform=ax.transAxes,
-        ha='right', va='center', fontsize=fs)
+x = 0.14
+ha = 'left'
+ax.text(x, y, f'D = {int(distance.value)} kpc', transform=ax.transAxes,
+        ha=ha, va='center', fontsize=fs)
 ax.text(x, y - dy, f'[Fe/H] = {feh}', transform=ax.transAxes,
-        ha='right', va='center', fontsize=fs)
-ax.text(x, y - 2 * dy, f'D = 17 kpc', transform=ax.transAxes,
-        ha='right', va='center', fontsize=fs)
+        ha=ha, va='center', fontsize=fs)
+ax.text(x, y - 2 * dy, f'Age = {round(10**10.1 /1e9, 1)} Gyr',
+        transform=ax.transAxes, ha=ha, va='center', fontsize=fs)
 
 ax.tick_params('both', labelsize=23)
 fig.savefig(os.path.join(fig_path, 'main-diagram', 'cmd.png'), dpi=300)
@@ -94,7 +95,7 @@ fig.savefig(os.path.join(fig_path, 'main-diagram', 'cmd.png'), dpi=300)
 ###############################################################################
 # Make xy Plummer positions figure
 ###############################################################################
-xy_dim = np.array([801, 801])
+xy_dim = np.array([2501, 2501])
 x_0, y_0 = xy_dim / 2
 
 r_pix = u.radian.to('arcsec') * (r_s / distance).decompose().value
@@ -132,9 +133,9 @@ ax.xaxis.set_ticks_position('bottom')
 ax.spines['left'].set_visible(False)
 ax.spines['bottom'].set_visible(False)
 
-y = 680
+y = y_0 + 1.3 * r_pix
 ax.plot([x_0, x_0 + r_pix], [y, y], '-', c=circ_c, lw=2)
-ax.text(x_0 + 0.5 * r_pix, y + 18, r'$r_s$', fontsize=35, ha='center')
+ax.text(x_0 + 0.5 * r_pix, y + 40, r'$r_s$', fontsize=35, ha='center')
 ax.set(xlim=[0, xy_dim[0] - 1], ylim=[0, xy_dim[1] - 1])
 
 fig.savefig(os.path.join(fig_path, 'main-diagram', 'plummer.png'), dpi=300)
@@ -160,29 +161,35 @@ for b, c in zip(bands, cmaps):
 ###############################################################################
 # Make RGB GC image
 ###############################################################################
+
+# use to convert mags to AB magnitudes
+zpt_convert = artpop.load_zero_point_converter()
+
+# random state for reproducibility
+rng = np.random.RandomState(123)
+
+phot_system = 'HST_ACSWF'
 src = artpop.MISTPlummerSSP(log_age, feh, phot_system, r_s,
                             distance, xy_dim, pixel_scale,
-                            total_mass=total_mass)
+                            total_mass=total_mass, random_state=rng)
 
 # HST-like artificial imager
 imager = artpop.ArtImager(phot_system, diameter=2.4, read_noise=3)
 
-# need AB magnitudes to use ArtImager
-zpt_convert = artpop.load_zero_point_converter()
+# some scaling to make the image pretty
+scale = dict(ACS_WFC_F814W=1, ACS_WFC_F606W=1.3, ACS_WFC_F475W=1.7)
 
 exptime = 90 * u.min
 images =[]
 
 # mock observe
-for i, b in enumerate(bands):
-    sky_sb = [22, 23, 24][i]
-    zpt = 25 - zpt_convert.to_ab(b)
+for b in bands:
+    zpt = 22
     _psf = fits.getdata(f'../data/{b}.fits')
-    obs = imager.observe(src, b, exptime=exptime, sky_sb=sky_sb,
-                         psf=_psf, zpt=zpt)
-    images.append(obs.image)
+    obs = imager.observe(src, b, exptime=exptime, psf=_psf, zpt=zpt)
+    images.append(obs.image * scale[b])
 
-rgb = make_lupton_rgb(*images, stretch=25, Q=8)
+rgb = make_lupton_rgb(*images, stretch=0.4, Q=8)
 fig, ax = artpop.show_image(rgb)
 fig.savefig(os.path.join(fig_path, 'main-diagram', 'gc_rgb.png'), dpi=300)
 ###############################################################################

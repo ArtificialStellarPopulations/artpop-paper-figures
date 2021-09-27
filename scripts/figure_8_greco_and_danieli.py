@@ -84,7 +84,7 @@ for num, band in enumerate('irg'):
 stretch = 15
 mock_rgb = make_lupton_rgb(*images, stretch=stretch)
 
-axes[0].imshow(mock_rgb)
+axes[0].imshow(mock_rgb, rasterized=True)
 axes[0].text(0.5, -0.05, 'model, ' +
     '$\mathrm{M}_\star = 5\cdot10^5\,\mathrm{M}_{\odot}$,' +
     ' 1 Mpc', c='black', fontsize=17,
@@ -108,7 +108,6 @@ image_g, hdr_g = fits.getdata(fn_g, header=True)
 image_r, hdr_r = fits.getdata(fn_r, header=True)
 image_i, hdr_i = fits.getdata(fn_i, header=True)
 
-# img_slice, arr_slice = embed_slices((4000, 5500),
 img_slice, arr_slice = embed_slices((550, 550),
                                     images[0].shape,
                                     image_g.shape)
@@ -118,7 +117,7 @@ image_r[img_slice] += images[1][arr_slice]
 image_g[img_slice] += images[2][arr_slice]
 
 mock_rgb_inject = make_lupton_rgb(image_i, image_r, image_g, stretch=15, Q=8)
-axes[1].imshow(mock_rgb_inject)
+axes[1].imshow(mock_rgb_inject, rasterized=True)
 axes[1].text(0.5, -0.05, 'model injected to DES data', c='black', fontsize=17,
          bbox=dict(facecolor='white', edgecolor='white',
             linewidth=2, boxstyle='round,pad=0.4', alpha=0.8),
@@ -169,4 +168,4 @@ lgnd.legendHandles[1]._sizes = [30]
 lgnd.legendHandles[2]._sizes = [30]
 lgnd.legendHandles[3]._sizes = [30]
 
-fig.savefig(os.path.join(fig_path, 'dwarf_des.jpeg'), dpi=300)
+fig.savefig(os.path.join(fig_path, 'dwarf_des.pdf'), dpi=170)

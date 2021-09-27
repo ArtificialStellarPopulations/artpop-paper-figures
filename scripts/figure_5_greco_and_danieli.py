@@ -63,7 +63,7 @@ fig.subplots_adjust(wspace=0.06, hspace=0.06)
 
 Q = 8
 fs = 22
-stretch = 0.25
+stretch = 0.2
 phases = ['all', 'MS', 'RGB', 'CHeB', 'EAGB', 'TPAGB']
 phase_labels = ['Full SSP', 'MS', 'RGB', 'CHeB', 'E-AGB', 'TP-AGB']
 
@@ -96,7 +96,8 @@ for i, log_age in enumerate(log_ages):
         rgb = make_lupton_rgb(*images, stretch=stretch, Q=Q)
 
         # plot image
-        _, _ax = artpop.show_image(rgb, subplots=(fig, axes[i, j]))
+        _, _ax = artpop.show_image(rgb, subplots=(fig, axes[i, j]),
+                                   rasterized=True)
 
         # add labels
         if i==0:
@@ -110,4 +111,4 @@ for i, log_age in enumerate(log_ages):
                             transform=axes[i, j].transAxes,
                             rotation=90, fontsize=22)
 
-fig.savefig(os.path.join(fig_path, 'phase-ssp-grid.png'), dpi=250)
+fig.savefig(os.path.join(fig_path, 'phase-ssp-grid.pdf'), dpi=170)

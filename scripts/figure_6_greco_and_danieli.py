@@ -150,7 +150,7 @@ if args.make_plot:
 
     for a, c in zip('ABC', colors):
         axes[a].set(xticks=[], yticks=[], aspect='equal')
-        artpop.show_image(rgb[c], subplots=(None, axes[a]));
+        artpop.show_image(rgb[c], subplots=(None, axes[a]), rasterized=True)
         gi = src_dict[c].sp.integrated_color('DECam_g', 'DECam_i')
         axes[a].set_title(f'$g-i$ = {gi:.2f}', fontsize=fs, y=1.015)
 
@@ -217,4 +217,4 @@ if args.make_plot:
             axes[_ax].spines[s].set_color(f'tab:{c}')
             axes[_ax].spines[s].set_linewidth(3)
 
-    plt.savefig(os.path.join(fig_path, 'dwarf_stoc.png'), dpi=250)
+    plt.savefig(os.path.join(fig_path, 'dwarf_stoc.pdf'), dpi=170)
