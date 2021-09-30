@@ -11,9 +11,6 @@ import artpop
 # load matplotlib style
 plt.style.use(artpop.jpg_style)
 
-# zero point converter based on MIST calculations
-zpt_convert = artpop.load_zero_point_converter()
-
 # path to figures
 fig_path = os.path.join(os.pardir, 'figures')
 
@@ -80,11 +77,11 @@ for feh in [-1.5, 0.0]:
 
     mass[feh] = np.array(mass[feh])
 
-    V[feh] = np.array(V[feh]) + zpt_convert.to_ab('Bessell_V')
-    I[feh] = np.array(I[feh]) + zpt_convert.to_ab('Bessell_I')
+    V[feh] = np.array(V[feh])
+    I[feh] = np.array(I[feh])
 
-    Vbar[feh] = np.array(Vbar[feh]) + zpt_convert.to_ab('Bessell_V')
-    Ibar[feh] = np.array(Ibar[feh]) + zpt_convert.to_ab('Bessell_I')
+    Vbar[feh] = np.array(Vbar[feh])
+    Ibar[feh] = np.array(Ibar[feh])
 ###############################################################################
 
 

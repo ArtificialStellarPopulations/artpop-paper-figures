@@ -162,9 +162,6 @@ for b, c in zip(bands, cmaps):
 # Make RGB GC image
 ###############################################################################
 
-# use to convert mags to AB magnitudes
-zpt_convert = artpop.load_zero_point_converter()
-
 # random state for reproducibility
 rng = np.random.RandomState(123)
 

@@ -14,9 +14,6 @@ import artpop
 # load matplotlib style
 plt.style.use(artpop.jpg_style)
 
-# need AB magnitudes to use ArtImager
-zpt_convert = artpop.load_zero_point_converter()
-
 # path to figures
 fig_path = os.path.join(os.pardir, 'figures')
 
